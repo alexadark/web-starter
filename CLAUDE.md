@@ -25,7 +25,7 @@
 
 ## React Router 7 Patterns
 
-**Always follow RR7 idioms** — see `.claude/references/react-router.md` for the full guide.
+**Always follow RR7 idioms** — the `.claude/agents/react-router.md` agent enforces best practices and uses Context7 for up-to-date docs.
 
 Key rules:
 
@@ -109,8 +109,6 @@ app/
 test/
   mocks/           MSW mock handlers
 e2e/               Playwright E2E tests
-.claude/
-  references/      Reference docs (React Router patterns)
 .storybook/        Storybook configuration
 .github/
   workflows/       CI pipeline

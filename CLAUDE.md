@@ -50,6 +50,23 @@ For local static assets, use a plain `<img>` with `loading="lazy"` and `decoding
 - Test user behavior, not implementation: `screen.getByRole()` over `container.querySelector()`
 - Run `npm run test` before committing — CI will catch failures on push
 
+## Environment Validation
+
+Server environment variables are validated at startup via `app/lib/env.server.ts` (Zod schema). If any required var is missing, the app crashes immediately with a clear error message.
+
+```ts
+import { env } from "~/lib/env.server";
+// env.DATABASE_URL — validated, typed, no `!` assertions needed
+```
+
+When adding new server env vars, add them to both `env.server.ts` and `.env.example`.
+
+## Database
+
+- Lazy connection via Proxy pattern — no DB connection at import time (safe for typecheck/tests)
+- pgBouncer-compatible config: `{ max: 1, prepare: false }`
+- Uses validated `env.DATABASE_URL` instead of `process.env.DATABASE_URL!`
+
 ## Server Utilities
 
 Import all server utilities from the barrel:
@@ -128,27 +145,11 @@ npm run db:push      # Push schema directly (no migration files)
 npm run db:studio    # Open Drizzle Studio
 ```
 
-## Workflow
+## Security
 
-This project is designed to work with [Get Shit Done (GSD)](https://github.com/gsd-build/get-shit-done) — a spec-driven development system for Claude Code.
-
-### Install GSD
-
-```bash
-npx get-shit-done-cc@latest
-```
-
-### Core Commands
-
-```
-/gsd:new-project     → Questions → research → requirements → roadmap
-/gsd:discuss-phase N → Shape implementation decisions before planning
-/gsd:plan-phase N    → Research → atomic task plans → verification
-/gsd:execute-phase N → Wave-based parallel execution with atomic commits
-/gsd:verify-work N   → Goal-backward verification of built work
-```
-
-See the [GSD documentation](https://github.com/gsd-build/get-shit-done) for the full command list and user guide.
+- Security headers configured in `vercel.json` (X-Frame-Options, X-Content-Type-Options, Referrer-Policy, Permissions-Policy)
+- Environment variables validated at boot via Zod - app crashes early on misconfiguration
+- Database connection is lazy and pgBouncer-compatible
 
 ## Customization Checklist
 
@@ -160,5 +161,4 @@ After cloning this template:
 - [ ] Install project-specific fonts (`@fontsource/*`)
 - [ ] Add deployment adapter (e.g. `@vercel/react-router`)
 - [ ] Set up `.env` from `.env.example`
-- [ ] Install GSD: `npx get-shit-done-cc@latest`
-- [ ] Run `/gsd:new-project` to begin
+- [ ] Start building

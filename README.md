@@ -1,6 +1,6 @@
 # Web Starter
 
-Personal project template: React Router 7 + TypeScript + Tailwind CSS 4 + Drizzle ORM + Vitest + MSW + Storybook + Playwright + GitHub Actions CI.
+Production-ready web project template: React Router 7 + TypeScript + Tailwind CSS 4 + Drizzle ORM + Vitest + MSW + Storybook + Playwright + GitHub Actions CI.
 
 ## Stack
 
@@ -86,6 +86,12 @@ e2e/                 Playwright E2E tests
 .github/workflows/   CI pipeline
 ```
 
+## Environment Validation
+
+Server env vars are validated at startup via Zod (`app/lib/env.server.ts`). Missing or invalid vars crash the app immediately with a clear error - no silent failures in production.
+
+Add new server env vars to both `env.server.ts` and `.env.example`.
+
 ## Database
 
 Schema lives in `app/lib/db/schema.ts`. The Drizzle client is exported from `app/lib/db/index.ts`:
@@ -93,6 +99,8 @@ Schema lives in `app/lib/db/schema.ts`. The Drizzle client is exported from `app
 ```ts
 import { db } from "~/lib/db";
 ```
+
+The database connection is **lazy** (Proxy pattern) - no connection is created at import time, making it safe during typecheck and tests. Configured for pgBouncer compatibility (`max: 1, prepare: false`).
 
 ### app_config table
 
@@ -145,26 +153,12 @@ Use the `/component` Claude Code command to scaffold all three at once.
 - MSW handlers live in `test/mocks/handlers.ts`
 - Stories include `Default` + `DarkMode` variants
 
-## Workflow
+## Security
 
-This project is designed to work with [Get Shit Done (GSD)](https://github.com/gsd-build/get-shit-done) — a spec-driven development system for Claude Code.
-
-```bash
-# Install GSD
-npx get-shit-done-cc@latest
-```
-
-Core commands:
-
-```
-/gsd:new-project     → Questions → research → requirements → roadmap
-/gsd:discuss-phase N → Shape implementation decisions before planning
-/gsd:plan-phase N    → Research → atomic task plans → verification
-/gsd:execute-phase N → Wave-based parallel execution with atomic commits
-/gsd:verify-work N   → Goal-backward verification of built work
-```
-
-See the [GSD documentation](https://github.com/gsd-build/get-shit-done) for the full command list.
+- Security headers configured in `vercel.json` (X-Frame-Options, X-Content-Type-Options, Referrer-Policy, Permissions-Policy)
+- Environment variables validated at boot via Zod - crashes early on misconfiguration
+- Database connection is lazy and pgBouncer-compatible
+- 404 catch-all route prevents information leakage
 
 ## Customization Checklist
 
@@ -177,5 +171,4 @@ After cloning:
 - [ ] Install fonts (`@fontsource/*`) if needed
 - [ ] Add deployment adapter (e.g. `@vercel/react-router`)
 - [ ] Fill in `.env` from `.env.example`
-- [ ] Install GSD: `npx get-shit-done-cc@latest`
-- [ ] Run `/gsd:new-project` to begin
+- [ ] Start building

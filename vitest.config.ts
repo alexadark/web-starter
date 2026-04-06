@@ -7,7 +7,7 @@ export default defineConfig({
     environment: "jsdom",
     globals: true,
     setupFiles: ["./vitest.setup.ts"],
-    passWithNoTests: true,
+    passWithNoTests: false,
     exclude: ["node_modules", "e2e", ".react-router", "build", "dist"],
   },
 });

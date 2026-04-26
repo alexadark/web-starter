@@ -2,6 +2,8 @@
 
 Personal project template: React Router 7 + TypeScript + Tailwind CSS 4 + Drizzle ORM + Vitest + MSW + Storybook + Playwright + GitHub Actions CI.
 
+> Tooling config (CI, biome, vitest, drizzle, playwright, tsconfig) comes from RIFF templates. Run `./scripts/sync-from-riff.sh` after clone.
+
 ## Stack
 
 | Layer     | Technology                               |
